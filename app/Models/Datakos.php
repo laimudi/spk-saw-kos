@@ -26,4 +26,9 @@ class Datakos extends Model
     }
 
     protected $table = 'datakos';
+
+    public function crips()
+    {
+        return $this->belongsToMany(Crips::class);
+    }
 }

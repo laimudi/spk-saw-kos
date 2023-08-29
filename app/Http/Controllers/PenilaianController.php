@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AlternatifCrip;
 use App\Models\Datakos;
 use App\Models\Kriteria;
 use Illuminate\Http\Request;
@@ -13,10 +14,14 @@ class PenilaianController extends Controller
      */
     public function index()
     {
-        $datakos = Datakos::with('penilaian.crips')->get();
-        $kriterias = Kriteria::with('crips')->orderBy('nama_kriteria', 'ASC')->get();
-        // return response()->json($kriterias);
-        return view('admin.penilaian.index', compact('datakos', 'kriterias'));
+        // $datakos = Datakos::with('penilaian.crips')->get();
+        // $kriterias = Kriteria::with('crips')->orderBy('nama_kriteria', 'ASC')->get();
+        // // return response()->json($kriterias);
+        // return view('admin.penilaian.index', compact('datakos', 'kriterias'));
+        $nilaiAlternatif = AlternatifCrip::all();
+        $kriterias = Kriteria::with('crips')->get();
+        $alternatifs = Datakos::all();
+        return view('admin.nilai_alternatif.index', compact(['nilaiAlternatif', 'kriterias', 'alternatifs']));
     }
 
     /**
@@ -32,7 +37,14 @@ class PenilaianController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        foreach ($request->crip as $crip) {
+            NilaiAlternatif::create([
+                'crips_id' => $crip,
+                'datakos_id' => $request->alternatif,
+            ]);
+        }
+
+        return redirect()->route('penilaian.index');
     }
 
     /**
